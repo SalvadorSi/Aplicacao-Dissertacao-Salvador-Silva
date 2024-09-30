@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  kotlin-backend:
+    build:
+      context: ./API-Kotlin
+      dockerfile: Dockerfile
+    environment:
+      - JWT_KEY=xxx
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+
+  python-backend:
+    build:
+      context: ./API-Python
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - app-network
+    depends_on:
+      - kotlin-backend
+
+  frontend:
+    build:
+      context: ./Frontend/frontendreact
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    depends_on:
+      - kotlin-backend
+      - python-backend
+
+networks:
+  app-network:
+    driver: bridge
